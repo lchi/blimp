@@ -1,12 +1,10 @@
-#!/usr/bin/env python
 import os
 import yaml
 from argparse import ArgumentParser
 from clint.textui import indent, puts
 
 def _get_parser():
-    default_config_file = "{}/blimp_config.yaml".format(
-            os.path.dirname(os.path.realpath(__file__)))
+    default_config_file = os.path.normpath(os.path.expanduser("~/.blimp/config.yaml"))
 
     parser = ArgumentParser()
     parser.add_argument("-f", "--config-file",
@@ -27,10 +25,10 @@ def parse_config(config_filename):
     with open(config_filename, 'r') as f:
         return yaml.load(f)
 
-def run_command(commands, command, config):
+def run_command(commands, args, config):
     getattr(commands, args.command)(args, config)
 
-if __name__ == '__main__':
+def main():
     import commands
 
     parser = _get_parser()
@@ -39,3 +37,6 @@ if __name__ == '__main__':
 
     config = parse_config(args.config_file)
     run_command(commands, args, config)
+
+if __name__ == '__main__':
+    main()
