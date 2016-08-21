@@ -1,27 +1,41 @@
 #!/usr/bin/env python
 import os
+import yaml
 from argparse import ArgumentParser
 from clint.textui import indent, puts
 
-
-if __name__ == '__main__':
+def _get_parser():
     default_config_file = "{}/blimp_config.yaml".format(
             os.path.dirname(os.path.realpath(__file__)))
 
-    parser = ArgumentParser("Command-line utility for interacting with AWS")
-    parser.add_argument('command', type=str, help='command to use')
+    parser = ArgumentParser()
     parser.add_argument("-f", "--config-file",
             required=False,
             help="Configuration file to use, default: {}".format(default_config_file),
             default=default_config_file)
 
+    return parser
+
+def _register_subparsers(parser, commands_module):
+    subparsers = parser.add_subparsers(help="commands", dest="command")
+
+    register_functions = filter(lambda f: f.startswith('_register'), dir(commands_module))
+    for rf in register_functions:
+        getattr(commands_module, rf)(subparsers)
+
+def parse_config(config_filename):
+    with open(config_filename, 'r') as f:
+        return yaml.load(f)
+
+def run_command(commands, command, config):
+    getattr(commands, args.command)(config)
+
+if __name__ == '__main__':
+    import commands
+
+    parser = _get_parser()
+    _register_subparsers(parser, commands)
     args = parser.parse_args()
 
-    import commands
-    try:
-        getattr(commands, args.command)()
-    except AttributeError:
-        puts("Command '{}' not found. Available commands:".format(args.command))
-        with indent(4):
-            all_commands = ["* {}".format(attr) for attr in dir(commands) if not attr.startswith('__')]
-            puts("\n".join(all_commands))
+    config = parse_config(args.config_file)
+    run_command(commands, args.command, config)
