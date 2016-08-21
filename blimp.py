@@ -28,7 +28,7 @@ def parse_config(config_filename):
         return yaml.load(f)
 
 def run_command(commands, command, config):
-    getattr(commands, args.command)(config)
+    getattr(commands, args.command)(args, config)
 
 if __name__ == '__main__':
     import commands
@@ -38,4 +38,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     config = parse_config(args.config_file)
-    run_command(commands, args.command, config)
+    run_command(commands, args, config)
