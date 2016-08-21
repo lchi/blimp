@@ -1,7 +1,6 @@
 import boto3
 from clint.textui import puts
 
-
 def _launch_args(args, config):
 
     role_config = config['roles'][args.role]
