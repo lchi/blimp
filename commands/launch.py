@@ -1,5 +1,6 @@
 import boto3
-from clint.textui import puts
+import time
+from clint.textui import indent, puts
 
 def _launch_args(args, config):
 
@@ -28,6 +29,13 @@ def launch(args, config):
 
     puts('New instance id: {}'.format(instance.id))
 
+    with indent(4):
+        while instance.state['Code'] is not 16:
+            puts("Instance state:{}, sleeping for five seconds".format(instance.state['Name']))
+            time.sleep(5)
+            instance.load()
+
+    puts('Tagging {} with the name {}'.format(instance.id, args.hostname))
     tags = [{
         'Key': 'Name',
         'Value': args.hostname,
