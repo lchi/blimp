@@ -9,7 +9,11 @@ def ssh(args, config):
     ec2 = boto3.resource('ec2')
 
     hostname = args.hostname
-    instances = [i for i in ec2.instances.filter(Filters=[{'Name':'tag:Name', 'Values':[hostname]}])]
+    filters = [
+        {'Name':'tag:Name', 'Values':[hostname]},
+        {'Name':'instance-state-name', 'Values':['running']}
+    ]
+    instances = [i for i in ec2.instances.filter(Filters=filters)]
 
     num_instances = len(instances)
     if num_instances is 0:
