@@ -1,8 +1,7 @@
 import boto3
 import subprocess
 import sys
-from clint.textui import indent, puts, prompt
-from pprint import pformat
+from clint.textui import indent, puts
 import shlex
 
 def ssh(args, config):
