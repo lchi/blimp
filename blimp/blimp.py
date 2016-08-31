@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
+import argcomplete
 import os
 import yaml
 from argparse import ArgumentParser
@@ -15,7 +18,7 @@ def _get_parser():
     return parser
 
 def _register_subparsers(parser, commands_module):
-    subparsers = parser.add_subparsers(help="commands", dest="command")
+    subparsers = parser.add_subparsers(help="commands")
 
     register_functions = filter(lambda f: f.startswith('_register'), dir(commands_module))
     for rf in register_functions:
@@ -33,6 +36,8 @@ def main():
 
     parser = _get_parser()
     _register_subparsers(parser, commands)
+    argcomplete.autocomplete(parser,
+            always_complete_options=False)
     args = parser.parse_args()
 
     config = parse_config(args.config_file)

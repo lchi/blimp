@@ -31,11 +31,29 @@ def ssh(args, config):
     command = "ssh {}{}".format(ssh_user_arg, instance.public_ip_address)
     subprocess.call(shlex.split(command))
 
+def _all_running_instances():
+    ec2 = boto3.resource('ec2')
+
+    filters = [
+        {'Name':'instance-state-name', 'Values':['running']}
+    ]
+    return [i for i in ec2.instances.filter(Filters=filters)]
+
+def hostname_completer(prefix, **kwargs):
+    instance_names = []
+    for i in _all_running_instances():
+        for tag in i.tags:
+            if tag['Key'] == 'Name' and tag['Value'].startswith(prefix):
+                instance_names.append(tag['Value'])
+                break
+
+    return instance_names
+
 def _register_ssh(subparsers):
-    parser_terminate = subparsers.add_parser('ssh')
-    parser_terminate.add_argument('hostname',
-            type=str,
+    parser_ssh = subparsers.add_parser('ssh')
+    hostname_arg = parser_ssh.add_argument('hostname',
             help='"Name" tag of the instance to connect to')
-    parser_terminate.add_argument('-u', '--ssh-user',
+    hostname_arg.completer = hostname_completer
+    parser_ssh.add_argument('-u', '--ssh-user',
             type=str,
             help='ssh username to use')
