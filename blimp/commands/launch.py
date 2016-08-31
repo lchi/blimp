@@ -6,7 +6,7 @@ def _launch_args(args, config):
 
     role_config = config['roles'][args.role]
 
-    return {
+    launch_args = {
         'ImageId': role_config['ami_id'],
         'MinCount': 1,
         'MaxCount': 1,
@@ -20,6 +20,11 @@ def _launch_args(args, config):
         'InstanceInitiatedShutdownBehavior': 'stop',
         'EbsOptimized': role_config['ebs_optimized'],
     }
+
+    if args.private_ip_address:
+        launch_args['PrivateIpAddress'] = args.private_ip_address
+
+    return launch_args
 
 def launch(args, config):
     ec2 = boto3.resource('ec2')
@@ -55,3 +60,7 @@ def _register_launch(subparsers):
             type=str,
             required=True,
             help='Hostname of the new host')
+    parser_launch.add_argument('-i', '--private-ip-address',
+            type=str,
+            required=True,
+            help='Private ip address to assign')
