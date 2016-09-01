@@ -1,31 +1,14 @@
 import boto3
 import subprocess
 import sys
-from clint.textui import indent, puts
 import shlex
+from clint.textui import indent, puts
+from helpers.aws import get_single_instance_by_name_tag
 
 def ssh(args, config):
     ec2 = boto3.resource('ec2')
 
-    hostname = args.hostname
-    filters = [
-        {'Name':'tag:Name', 'Values':[hostname]},
-        {'Name':'instance-state-name', 'Values':['running']}
-    ]
-    instances = [i for i in ec2.instances.filter(Filters=filters)]
-
-    num_instances = len(instances)
-    if num_instances is 0:
-        puts("No instance returned for {}".format(hostname))
-        sys.exit(1)
-    elif num_instances > 1:
-        puts("Multiple instances returned for {}".format(hostname))
-        with indent(4):
-            for instance in query_results:
-                puts("{}".format(instance))
-        sys.exit(1)
-
-    instance = instances[0]
+    instance = get_single_instance_by_name_tag(args.hostname)
 
     ssh_user_arg = "{}@".format(args.ssh_user) if args.ssh_user else ''
     command = "ssh {}{}".format(ssh_user_arg, instance.public_ip_address)
