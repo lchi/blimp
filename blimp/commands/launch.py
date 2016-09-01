@@ -1,6 +1,6 @@
 import boto3
 import time
-from clint.textui import indent, puts
+from clint.textui import indent, puts_err
 
 def _launch_args(args, config):
 
@@ -36,15 +36,15 @@ def launch(args, config):
     launch_config = _launch_args(args, config)
     instance = ec2.create_instances(**launch_config)[0]
 
-    puts('New instance id: {}'.format(instance.id))
+    puts_err('New instance id: {}'.format(instance.id))
 
     with indent(4):
         while instance.state['Code'] is not 16:
-            puts("Instance state:{}, sleeping for five seconds".format(instance.state['Name']))
+            puts_err("Instance state:{}, sleeping for five seconds".format(instance.state['Name']))
             time.sleep(5)
             instance.load()
 
-    puts('Tagging {} with the name {}'.format(instance.id, args.hostname))
+    puts_err('Tagging {} with the name {}'.format(instance.id, args.hostname))
     tags = [{
         'Key': 'Name',
         'Value': args.hostname,
