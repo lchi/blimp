@@ -1,4 +1,5 @@
 import boto3
+import json
 from clint.textui import indent, puts
 
 def get_single_instance_by_name_tag(name):
@@ -22,3 +23,22 @@ def get_single_instance_by_name_tag(name):
         sys.exit(1)
 
     return instances[0]
+
+def json_serialize_instance(instance):
+    """Takes a boto instance object and JOSN stringifies it"""
+
+    attributes = [
+        'instance_id',
+        'public_dns_name',
+        'public_ip_address',
+        'private_ip_address',
+        'tags',
+        'instance_type',
+        'architecture',
+        'image_id',
+        'vpc_id',
+        'subnet_id',
+        'security_groups',
+    ]
+
+    return json.dumps({a: getattr(instance, a) for a in attributes})

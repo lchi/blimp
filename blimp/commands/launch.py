@@ -1,6 +1,7 @@
 import boto3
 import time
-from clint.textui import indent, puts_err
+from clint.textui import indent, puts, puts_err
+from helpers.aws import json_serialize_instance
 
 def _launch_args(args, config):
 
@@ -50,6 +51,8 @@ def launch(args, config):
         'Value': args.hostname,
     }]
     instance.create_tags(Tags=tags)
+
+    puts(json_serialize_instance(instance))
 
 def _register_launch(subparsers):
     parser_launch = subparsers.add_parser('launch', help='launch help')
