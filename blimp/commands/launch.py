@@ -23,6 +23,10 @@ def _launch_args(args, config):
 
     if args.private_ip_address:
         launch_args['PrivateIpAddress'] = args.private_ip_address
+    if role_config['iam_instance_profile_arn']:
+        launch_args['IamInstanceProfile'] = {
+            'Arn': role_config['iam_instance_profile_arn'],
+        }
 
     return launch_args
 
