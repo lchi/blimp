@@ -23,7 +23,7 @@ def _launch_args(args, config):
 
     if args.private_ip_address:
         launch_args['PrivateIpAddress'] = args.private_ip_address
-    if role_config['iam_instance_profile_arn']:
+    if 'iam_instance_profile_arn' in role_config:
         launch_args['IamInstanceProfile'] = {
             'Arn': role_config['iam_instance_profile_arn'],
         }
@@ -66,5 +66,4 @@ def _register_launch(subparsers):
             help='Hostname of the new host')
     parser_launch.add_argument('-i', '--private-ip-address',
             type=str,
-            required=True,
             help='Private ip address to assign')
