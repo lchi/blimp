@@ -1,5 +1,7 @@
 # blimp
 
+[![Build Status](https://travis-ci.org/lchi/blimp.svg?branch=master)](https://travis-ci.org/lchi/blimp)
+
 A lightweight wrapper around `boto` that helps you get to the cloud.
 
 ## Installation
