@@ -1,18 +1,21 @@
+from pprint import pformat
+
 import boto3
 from clint.textui import indent, puts, prompt
-from pprint import pformat
+
 
 def _get_instance_details(instance):
     return {
-       'tags': instance.tags,
-       'launch_time': instance.launch_time.isoformat(),
-       'instance_type': instance.instance_type,
-       'state': instance.state,
-       'key_name': instance.key_name,
-       'public_dns_name': instance.public_dns_name,
-       'private_dns_name': instance.private_dns_name,
-       'placement': instance.placement,
-   }
+        'tags': instance.tags,
+        'launch_time': instance.launch_time.isoformat(),
+        'instance_type': instance.instance_type,
+        'state': instance.state,
+        'key_name': instance.key_name,
+        'public_dns_name': instance.public_dns_name,
+        'private_dns_name': instance.private_dns_name,
+        'placement': instance.placement,
+    }
+
 
 def terminate(args, config):
     ec2 = boto3.resource('ec2')
@@ -27,12 +30,13 @@ def terminate(args, config):
 
     if confirm is "y":
         instance.terminate()
-        puts("termination request issued".format(instance_id))
+        puts("termination request issued")
     else:
         puts("aborted")
+
 
 def _register_terminate(subparsers):
     parser_terminate = subparsers.add_parser('terminate', help='terminate help')
     parser_terminate.add_argument('instance_id',
-            type=str,
-            help='id of the instance to terminate')
+                                  type=str,
+                                  help='id of the instance to terminate')
