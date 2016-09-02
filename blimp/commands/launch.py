@@ -3,7 +3,7 @@ import time
 from clint.textui import indent, puts, puts_err
 from helpers.aws import json_serialize_instance
 
-def _launch_args(args, config):
+def _get_launch_args_and_tags(args, config):
 
     role_config = config['roles'][args.role]
 
@@ -29,12 +29,20 @@ def _launch_args(args, config):
             'Arn': role_config['iam_instance_profile_arn'],
         }
 
-    return launch_args
+    tags = [{
+        'Key': 'Name',
+        'Value': args.hostname,
+    }]
+    for tag in role_config['tags']:
+        for k in tag.keys():
+            tags.append({'Key':k, 'Value':tag[k]})
+
+    return launch_args, tags
 
 def launch(args, config):
     ec2 = boto3.resource('ec2')
 
-    launch_config = _launch_args(args, config)
+    launch_config, tags = _get_launch_args_and_tags(args, config)
     instance = ec2.create_instances(**launch_config)[0]
 
     puts_err('New instance id: {}'.format(instance.id))
@@ -46,10 +54,6 @@ def launch(args, config):
             instance.load()
 
     puts_err('Tagging {} with the name {}'.format(instance.id, args.hostname))
-    tags = [{
-        'Key': 'Name',
-        'Value': args.hostname,
-    }]
     instance.create_tags(Tags=tags)
 
     puts(json_serialize_instance(instance))
