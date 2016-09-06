@@ -35,7 +35,8 @@ def _get_launch_args_and_tags(args, config):
         'Key': 'Name',
         'Value': args.hostname,
     }]
-    for tag in role_config['tags']:
+
+    for tag in role_config.get('tags', []):
         for k in tag.keys():
             tags.append({'Key': k, 'Value': tag[k]})
 
