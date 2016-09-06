@@ -30,6 +30,8 @@ def _get_launch_args_and_tags(args, config):
         launch_args['IamInstanceProfile'] = {
             'Arn': role_config['iam_instance_profile_arn'],
         }
+    if 'block_device_mappings' in role_config:
+        launch_args['BlockDeviceMappings'] = role_config['block_device_mappings']
 
     tags = [{
         'Key': 'Name',
