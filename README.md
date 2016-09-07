@@ -14,7 +14,20 @@ You'll also need to follow the [boto credentials setup instructions](http://boto
 
 ## Running tests
 
+Check out the [Travis configuration](.travis.yml) for how to run tests.
+
 ```bash
-pip install -r dev-requirements.txt
+pip install -r requirements.txt
 nosetests
 ```
+
+### flake8 setup
+
+This project uses flake8 to perform some static analysis checks. To install you can do the following:
+
+```
+pip install flake8
+flake8 blimp
+```
+
+Additionally, there is a [git hook](git-hooks/pre-commit) that you can [install](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to run `flake8` prior to committing.
