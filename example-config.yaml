@@ -1,0 +1,23 @@
+key_pair: key-pair-foo
+subnets:
+  subnet-1a: subnet-12345678
+roles:
+  front:
+    ImageId: ami-1c221e76
+    InstanceType: t2.micro
+    SecurityGroupIds:
+      - sg-abcdefg0
+    EbsOptimized: false
+    Monitoring:
+      Enabled: true
+    Tags:
+      - BillingEnv: Development
+    BlockDeviceMappings:
+      - DeviceName: /dev/sda1
+        Ebs:
+          DeleteOnTermination: True
+          VolumeType: gp2
+      - DeviceName: /dev/sdb
+        Ebs:
+          VolumeType: gp2
+          VolumeSize: 30

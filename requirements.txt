@@ -1,3 +1,6 @@
 boto3==1.4.0
 clint==0.5.1
 pyaml==15.8.2
+nose
+moto
+flake8
