@@ -7,38 +7,27 @@ from helpers.aws import json_serialize_instance
 
 def _get_launch_args_and_tags(args, config):
 
-    role_config = config['roles'][args.role]
-
     launch_args = {
-        'ImageId': role_config['ami_id'],
         'MinCount': 1,
         'MaxCount': 1,
         'KeyName': config['key_pair'],
-        'SecurityGroupIds': role_config['security_group_ids'],
-        'InstanceType': role_config['instance_type'],
-        'Monitoring': {
-            'Enabled': role_config['monitoring'],
-        },
         'SubnetId': config['network']['availability_zones'][args.availability_zone]['subnet_id'],
         'InstanceInitiatedShutdownBehavior': 'stop',
-        'EbsOptimized': role_config['ebs_optimized'],
     }
+
+    role_config = config['roles'][args.role]
+    role_tags = role_config.pop('Tags', [])
+    launch_args.update(role_config)
 
     if args.private_ip_address:
         launch_args['PrivateIpAddress'] = args.private_ip_address
-    if 'iam_instance_profile_arn' in role_config:
-        launch_args['IamInstanceProfile'] = {
-            'Arn': role_config['iam_instance_profile_arn'],
-        }
-    if 'block_device_mappings' in role_config:
-        launch_args['BlockDeviceMappings'] = role_config['block_device_mappings']
 
     tags = [{
         'Key': 'Name',
         'Value': args.hostname,
     }]
 
-    for tag in role_config.get('tags', []):
+    for tag in role_tags:
         for k in tag.keys():
             tags.append({'Key': k, 'Value': tag[k]})
 
