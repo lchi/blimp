@@ -11,7 +11,7 @@ def _get_launch_args_and_tags(args, config):
         'MinCount': 1,
         'MaxCount': 1,
         'KeyName': config['key_pair'],
-        'SubnetId': config['network']['availability_zones'][args.availability_zone]['subnet_id'],
+        'SubnetId': config['subnets'][args.subnet],
         'InstanceInitiatedShutdownBehavior': 'stop',
     }
 
@@ -59,10 +59,10 @@ def _register_launch(subparsers):
     parser_launch.add_argument('role',
                                type=str,
                                help='Role of the EC2 instance to launch')
-    parser_launch.add_argument('-a', '--availability-zone',
+    parser_launch.add_argument('-s', '--subnet',
                                type=str,
                                required=True,
-                               help='Availability zone to launch in')
+                               help='Subnet to launch in')
     parser_launch.add_argument('-n', '--hostname',
                                type=str,
                                required=True,
